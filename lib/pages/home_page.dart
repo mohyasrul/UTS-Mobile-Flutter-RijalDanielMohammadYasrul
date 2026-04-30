@@ -71,19 +71,19 @@ class HomePage extends StatelessWidget {
   static const List<LostItem> dummyItems = [
     LostItem(
       title: 'Dompet Hitam',
-      location: 'Perpustakaan Lantai 2',
+      location: 'Lab Gedung D',
       date: '25/04/2026',
       status: 'Found',
     ),
     LostItem(
       title: 'Botol Minum Biru',
-      location: 'Lapangan Basket',
+      location: 'Parkir Satpam',
       date: '24/04/2026',
       status: 'Lost',
     ),
     LostItem(
       title: 'Kacamata',
-      location: 'Kantin Tengah',
+      location: 'Abah',
       date: '26/04/2026',
       status: 'Found',
     ),
