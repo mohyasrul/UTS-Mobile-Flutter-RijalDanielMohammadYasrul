@@ -37,8 +37,11 @@ void main() {
 
       expect(find.text('Home - Lost & Found ITG'), findsOneWidget);
 
-      // Navigate to Profile page
-      await tester.tap(find.text('Profile'));
+      // List contains dummy item
+      expect(find.text('Dompet Hitam'), findsOneWidget);
+
+      // Navigate to Profile page via appbar icon
+      await tester.tap(find.byIcon(Icons.person));
       await tester.pumpAndSettle();
 
       expect(find.text('Profile'), findsOneWidget);
