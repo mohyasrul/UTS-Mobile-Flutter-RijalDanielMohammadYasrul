@@ -37,6 +37,19 @@ void main() {
 
       expect(find.text('Home - Lost & Found ITG'), findsOneWidget);
 
+      // Navigate to Profile page
+      await tester.tap(find.text('Profile'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Profile'), findsOneWidget);
+      expect(find.text('Nama'), findsOneWidget);
+
+      // Go back to Home
+      await tester.tap(find.text('Kembali'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Home - Lost & Found ITG'), findsOneWidget);
+
       // Tap logout and expect to return to Login screen
       await tester.tap(find.byTooltip('Logout'));
       await tester.pumpAndSettle();
