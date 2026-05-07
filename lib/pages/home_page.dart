@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:uts_pemrogramanmobile/pages/login_page.dart';
 import 'package:uts_pemrogramanmobile/pages/profile_page.dart';
@@ -34,8 +36,12 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _filteredItems = _items
           .where((item) =>
-              item.title.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-              item.location.toLowerCase().contains(_searchController.text.toLowerCase()))
+              item.title
+                  .toLowerCase()
+                  .contains(_searchController.text.toLowerCase()) ||
+              item.location
+                  .toLowerCase()
+                  .contains(_searchController.text.toLowerCase()))
           .toList();
     });
   }
@@ -169,7 +175,8 @@ class _HomePageState extends State<HomePage> {
                 if (_filteredItems.length != _items.length)
                   Text(
                     '${_filteredItems.length} hasil ditemukan',
-                    style: TextStyle(color: theme.colorScheme.primary, fontSize: 12),
+                    style: TextStyle(
+                        color: theme.colorScheme.primary, fontSize: 12),
                   ),
               ],
             ),
@@ -180,7 +187,8 @@ class _HomePageState extends State<HomePage> {
             child: _filteredItems.isEmpty
                 ? _buildEmptyState(theme)
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     itemCount: _filteredItems.length,
                     itemBuilder: (context, index) {
                       final item = _filteredItems[index];
@@ -194,16 +202,19 @@ class _HomePageState extends State<HomePage> {
                           clipBehavior: Clip.antiAlias,
                           child: ListTile(
                             onTap: () async {
-                              final updatedItem = await Navigator.push<LostItem>(
+                              final updatedItem =
+                                  await Navigator.push<LostItem>(
                                 context,
                                 MaterialPageRoute<LostItem>(
-                                  builder: (context) => ItemDetailsPage(item: item),
+                                  builder: (context) =>
+                                      ItemDetailsPage(item: item),
                                 ),
                               );
 
                               if (updatedItem != null) {
                                 setState(() {
-                                  final index = _items.indexWhere((i) => i.id == updatedItem.id);
+                                  final index = _items.indexWhere(
+                                      (i) => i.id == updatedItem.id);
                                   if (index != -1) {
                                     _items[index] = updatedItem;
                                     _onSearchChanged(); // Refresh filtered list
@@ -223,21 +234,35 @@ class _HomePageState extends State<HomePage> {
                                         : Colors.orange.withAlpha(26)),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Icon(
-                                isClaimed
-                                    ? Icons.verified_rounded
-                                    : (isFound
-                                        ? Icons.check_circle_outline_rounded
-                                        : Icons.help_outline_rounded),
-                                color: isClaimed
-                                    ? Colors.blue
-                                    : (isFound ? Colors.green : Colors.orange),
-                                size: 30,
-                              ),
+                              child: item.imageBytes != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.memory(
+                                        Uint8List.fromList(item.imageBytes!),
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : Icon(
+                                      isClaimed
+                                          ? Icons.verified_rounded
+                                          : (isFound
+                                              ? Icons
+                                                  .check_circle_outline_rounded
+                                              : Icons.help_outline_rounded),
+                                      color: isClaimed
+                                          ? Colors.blue
+                                          : (isFound
+                                              ? Colors.green
+                                              : Colors.orange),
+                                      size: 30,
+                                    ),
                             ),
                             title: Text(
                               item.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,7 +283,7 @@ class _HomePageState extends State<HomePage> {
                                     const Icon(Icons.calendar_today_outlined,
                                         size: 14, color: Colors.grey),
                                     const SizedBox(width: 4),
-                                    Text(item.date,
+                                    Text('${item.date} ${item.time}',
                                         style: const TextStyle(fontSize: 12)),
                                   ],
                                 ),
@@ -287,7 +312,9 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                   color: isClaimed
                                       ? Colors.blue[700]
-                                      : (isFound ? Colors.green[700] : Colors.orange[700]),
+                                      : (isFound
+                                          ? Colors.green[700]
+                                          : Colors.orange[700]),
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -308,7 +335,7 @@ class _HomePageState extends State<HomePage> {
             context,
             MaterialPageRoute(builder: (context) => const ReportItemPage()),
           );
-          
+
           if (newItem != null) {
             _addItem(newItem);
             messenger.showSnackBar(
@@ -342,7 +369,8 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 24),
           Text(
             'Tidak ada barang ditemukan',
-            style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
+            style:
+                TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
           ),
           Text(
             'Coba gunakan kata kunci lain',
@@ -358,9 +386,11 @@ const List<LostItem> dummyItems = [
   LostItem(
     id: '1',
     title: 'Dompet Hitam',
-    description: 'Dompet kulit warna hitam, merk Eiger. Berisi KTP atas nama Rijal.',
+    description:
+        'Dompet kulit warna hitam, merk Eiger. Berisi KTP atas nama Rijal.',
     location: 'Lab Gedung D',
     date: '25/04/2026',
+    time: '10:30',
     status: 'Found',
     category: 'Aksesoris',
     contactInfo: 'Satpam Gedung D',
@@ -368,9 +398,11 @@ const List<LostItem> dummyItems = [
   LostItem(
     id: '2',
     title: 'Botol Minum Biru',
-    description: 'Tumbler merk Tupperware warna biru navy, ada stiker logo ITG.',
+    description:
+        'Tumbler merk Tupperware warna biru navy, ada stiker logo ITG.',
     location: 'Parkir Satpam',
     date: '24/04/2026',
+    time: '14:15',
     status: 'Lost',
     category: 'Lainnya',
     contactInfo: '08123456789 (Daniel)',
@@ -381,6 +413,7 @@ const List<LostItem> dummyItems = [
     description: 'Kacamata minus dengan frame besi warna silver.',
     location: 'Gedung Rektorat',
     date: '26/04/2026',
+    time: '09:45',
     status: 'Found',
     category: 'Aksesoris',
     contactInfo: 'Resepsionis Rektorat',

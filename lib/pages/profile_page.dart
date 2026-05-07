@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -20,9 +21,29 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _nameCtrl = TextEditingController(text: _name);
-    _emailCtrl = TextEditingController(text: _email);
-    _phoneCtrl = TextEditingController(text: _phone);
+    _nameCtrl = TextEditingController();
+    _emailCtrl = TextEditingController();
+    _phoneCtrl = TextEditingController();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _name = prefs.getString('profile_name') ?? 'Nama Mahasiswa';
+      _email = prefs.getString('profile_email') ?? 'mahasiswa@itg.ac.id';
+      _phone = prefs.getString('profile_phone') ?? '08123456789';
+      _nameCtrl.text = _name;
+      _emailCtrl.text = _email;
+      _phoneCtrl.text = _phone;
+    });
+  }
+
+  Future<void> _saveProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('profile_name', _name);
+    await prefs.setString('profile_email', _email);
+    await prefs.setString('profile_phone', _phone);
   }
 
   @override
@@ -76,14 +97,20 @@ class _ProfilePageState extends State<ProfilePage> {
             child: const Text('Batal'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState?.validate() ?? false) {
                 setState(() {
                   _name = _nameCtrl.text.trim();
                   _email = _emailCtrl.text.trim();
                   _phone = _phoneCtrl.text.trim();
                 });
-                Navigator.pop(context);
+                await _saveProfile();
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Profil berhasil disimpan')),
+                  );
+                }
               }
             },
             child: const Text('Simpan'),

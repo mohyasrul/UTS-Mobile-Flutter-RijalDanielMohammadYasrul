@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:uts_pemrogramanmobile/models/lost_item.dart';
 
@@ -21,7 +23,7 @@ class ItemDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image Placeholder / Hero Section
+            // Image / Hero Section
             Hero(
               tag: item.id,
               child: Container(
@@ -33,22 +35,44 @@ class ItemDetailsPage extends StatelessWidget {
                           ? Colors.green.withAlpha(26)
                           : Colors.orange.withAlpha(26)),
                 ),
-                child: Center(
-                  child: Icon(
-                    isClaimed
-                        ? Icons.verified_rounded
-                        : (isFound
-                            ? Icons.check_circle_outline_rounded
-                            : Icons.help_outline_rounded),
-                    size: 100,
-                    color: isClaimed
-                        ? Colors.blue
-                        : (isFound ? Colors.green : Colors.orange),
-                  ),
-                ),
+                child: item.imageBytes != null
+                    ? ClipRRect(
+                        child: Image.memory(
+                          Uint8List.fromList(item.imageBytes!),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 250,
+                          errorBuilder: (context, error, stackTrace) => Center(
+                            child: Icon(
+                              isClaimed
+                                  ? Icons.verified_rounded
+                                  : (isFound
+                                      ? Icons.check_circle_outline_rounded
+                                      : Icons.help_outline_rounded),
+                              size: 100,
+                              color: isClaimed
+                                  ? Colors.blue
+                                  : (isFound ? Colors.green : Colors.orange),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: Icon(
+                          isClaimed
+                              ? Icons.verified_rounded
+                              : (isFound
+                                  ? Icons.check_circle_outline_rounded
+                                  : Icons.help_outline_rounded),
+                          size: 100,
+                          color: isClaimed
+                              ? Colors.blue
+                              : (isFound ? Colors.green : Colors.orange),
+                        ),
+                      ),
               ),
             ),
-            
+
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -58,7 +82,8 @@ class ItemDetailsPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: isClaimed
                               ? Colors.blue
@@ -75,8 +100,9 @@ class ItemDetailsPage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        item.date,
-                        style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+                        '${item.date} ${item.time}',
+                        style: theme.textTheme.bodySmall
+                            ?.copyWith(color: Colors.grey),
                       ),
                     ],
                   ),
@@ -89,7 +115,8 @@ class ItemDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withAlpha(26),
                       borderRadius: BorderRadius.circular(8),
@@ -104,7 +131,7 @@ class ItemDetailsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   _buildSectionTitle(theme, 'Deskripsi'),
                   const SizedBox(height: 8),
                   Text(
@@ -115,18 +142,19 @@ class ItemDetailsPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   _buildSectionTitle(theme, 'Lokasi'),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.location_on_rounded, color: theme.colorScheme.primary, size: 20),
+                      Icon(Icons.location_on_rounded,
+                          color: theme.colorScheme.primary, size: 20),
                       const SizedBox(width: 8),
                       Text(item.location, style: theme.textTheme.bodyLarge),
                     ],
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Contact Card
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -146,22 +174,29 @@ class ItemDetailsPage extends StatelessWidget {
                         Row(
                           children: [
                             CircleAvatar(
-                              backgroundColor: theme.colorScheme.primary.withAlpha(26),
-                              child: Icon(Icons.person, color: theme.colorScheme.primary),
+                              backgroundColor:
+                                  theme.colorScheme.primary.withAlpha(26),
+                              child: Icon(Icons.person,
+                                  color: theme.colorScheme.primary),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Pelapor', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                  Text(item.contactInfo, style: const TextStyle(fontWeight: FontWeight.w500)),
+                                  const Text('Pelapor',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                  Text(item.contactInfo,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w500)),
                                 ],
                               ),
                             ),
                             IconButton(
                               onPressed: () {},
-                              icon: const Icon(Icons.chat_bubble_outline_rounded),
+                              icon:
+                                  const Icon(Icons.chat_bubble_outline_rounded),
                               color: theme.colorScheme.primary,
                             ),
                           ],
@@ -178,27 +213,31 @@ class ItemDetailsPage extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(24),
         child: FilledButton.icon(
-          onPressed: isClaimed ? null : () {
-            final String newStatus = isFound ? 'Claimed' : 'Found';
-            final updatedItem = item.copyWith(status: newStatus);
-            
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(isFound 
-                  ? 'Permintaan klaim dikirim!' 
-                  : 'Status barang diperbarui menjadi Ditemukan!'),
-                backgroundColor: theme.colorScheme.primary,
-              ),
-            );
-            
-            Navigator.pop(context, updatedItem);
-          },
-          icon: Icon(isClaimed 
-            ? Icons.verified_user_rounded 
-            : (isFound ? Icons.handshake_rounded : Icons.check_circle_rounded)),
-          label: Text(isClaimed 
-            ? 'Barang Sudah Selesai' 
-            : (isFound ? 'Klaim Barang Ini' : 'Saya Menemukannya')),
+          onPressed: isClaimed
+              ? null
+              : () {
+                  final String newStatus = isFound ? 'Claimed' : 'Found';
+                  final updatedItem = item.copyWith(status: newStatus);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(isFound
+                          ? 'Permintaan klaim dikirim!'
+                          : 'Status barang diperbarui menjadi Ditemukan!'),
+                      backgroundColor: theme.colorScheme.primary,
+                    ),
+                  );
+
+                  Navigator.pop(context, updatedItem);
+                },
+          icon: Icon(isClaimed
+              ? Icons.verified_user_rounded
+              : (isFound
+                  ? Icons.handshake_rounded
+                  : Icons.check_circle_rounded)),
+          label: Text(isClaimed
+              ? 'Barang Sudah Selesai'
+              : (isFound ? 'Klaim Barang Ini' : 'Saya Menemukannya')),
         ),
       ),
     );

@@ -36,17 +36,27 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Brand Header
+                // Brand Header with Logo
                 Container(
-                  padding: const EdgeInsets.all(20),
+                  width: 120,
+                  height: 120,
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withAlpha(26), // 0.1 * 255
+                    color: theme.colorScheme.primary.withAlpha(26),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.travel_explore_rounded,
-                    size: 80,
-                    color: theme.colorScheme.primary,
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/logo_itg.png',
+                      width: 88,
+                      height: 88,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.travel_explore_rounded,
+                        size: 60,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -121,7 +131,9 @@ class _LoginPageState extends State<LoginPage> {
                               if (!isValid) return;
 
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Selamat Datang di Lost & Found ITG!')),
+                                const SnackBar(
+                                    content: Text(
+                                        'Selamat Datang di Lost & Found ITG!')),
                               );
 
                               Navigator.pushReplacement(
@@ -158,7 +170,8 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute<void>(
-                            builder: (BuildContext context) => const RegisterPage(),
+                            builder: (BuildContext context) =>
+                                const RegisterPage(),
                           ),
                         );
                       },
